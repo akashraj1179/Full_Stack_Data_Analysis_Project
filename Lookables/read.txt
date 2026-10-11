@@ -1,0 +1,101 @@
+ MYSQLDB
+full_stack_data_analysis_project
+=>sales_data
+=>cleaned_sales_data
+extraction.py
+=>helped in loading python dataframe to MySQL by loading as a table name sales_data in `full_stack_data_analysis_project`
+
+real_data_extraction.py
+=> read csv file raw_data and load to MySQL as a table name cleaned_sales_data in `full_stack_data_analysis_project`
+
+
+compliance_db(loaded from excel and csv files into sql tables)
+company_details: dim_entities
+raw_tax_data: fact_compliance
+
+
+make sure your venv is created using the requiredversion
+py -3.11 -m venv venv
+
+venv\Scripts\activate
+
+ Run file
+(venv) PS C:\Users\akash\Full_Stack_Data_Analysis_Project\Lookables> python compliance_engine.py
+checking currency rates....
+USD to INR Rate: 94.4628
+Reading Excel...
+Reading CSV...
+Uploading to MySQL...
+Updating fact_compliance...
+Updating dim_entities...
+✅ Data successfully replaced in MySQL!
+
+
+
+
+data_agent.py
+
+from langchain_openai import ChatOpenAI
+from langgraph.graph import StateGraph, END
+from compliance_engine import run_compliance_pipeline
+
+class AgentState(dict): pass
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+
+def agent_node(state: AgentState):
+    query = state["input"]
+    if "compliance" in query.lower():
+        state["output"] = run_compliance_pipeline()
+    else:
+        response = llm.invoke(query)
+        state["output"] = response.content
+    return state
+
+graph = StateGraph(AgentState)
+graph.add_node("agent", agent_node)
+graph.set_entry_point("agent")
+graph.add_edge("agent", END)
+app = graph.compile()
+
+
+
+
+requirements.txt
+langchain
+langgraph
+openai
+sqlalchemy
+pandas
+requests
+pymysql
+
+
+main.py
+
+from agents.data_agent import app
+
+if __name__ == "__main__":
+    result = app.invoke({"input": "Run compliance check on latest data"})
+    print(result["output"])
+
+
+.env
+
+OPENAI_API_KEY=your_api_key_here
+
+
+load below in data_agent.py
+
+from dotenv import load_dotenv
+load_dotenv()
+
+
+
+set env var directly in terminal
+
+export OPENAI_API_KEY="your_api_key_here"   # Mac/Linux
+setx OPENAI_API_KEY "your_api_key_here"     # Windows
+
+
+
+Would you like me to rewrite your compliance_engine.py into a function‑based version (keeping all your current logic intact) so it’s agent‑ready immediately?

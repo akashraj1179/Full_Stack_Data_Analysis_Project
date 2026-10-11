@@ -1,0 +1,7 @@
+langchain
+langgraph
+openai
+sqlalchemy
+pandas
+requests
+pymysql

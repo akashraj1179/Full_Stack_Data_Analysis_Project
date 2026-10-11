@@ -1,0 +1,23 @@
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# VS Code and temporary files
+.vscode/
+.idea/
+*.log
+.ipynb_checkpoints/

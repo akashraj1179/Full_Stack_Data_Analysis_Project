@@ -16,8 +16,14 @@ engine = create_engine(conn_string)
 try:
     # 2. Extract Data
     print("checking currency rates....")
-    rates = requests.get('https://api.exchangerate-api.com/v4/latest/USD').json()['rates']
+    url = "https://v6.exchangerate-api.com/v6/c77d967deae36de10d30c784/latest/USD"
+    response = requests.get(url, timeout = 10)
+    data = response.json()
+    if data.get('result') != 'success':
+         raise ValueError("Failed to fetch currency rates.")
+    rates = data['conversion_rates']
     usd_to_inr = rates.get('INR', 90.0)
+    print(f"USD to INR Rate: {usd_to_inr}")
 
     print("Reading Excel...")
     df_dim = pd.read_excel('company_details.xlsx')
